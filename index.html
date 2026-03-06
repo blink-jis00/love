@@ -15,20 +15,16 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            /* Update to use a vertical peach-to-pink gradient */
             background-image: linear-gradient(to bottom, #e68a4d, #fddbd2);
-            overflow: hidden;
-            /* Prevents scrollbars when button moves */
+            /* Keep this hidden by default so the NO button is hard to catch! */
+            overflow: hidden; 
         }
 
-        /* Container for all content on the main screen */
         .content-container {
             position: relative;
             z-index: 1;
-            /* Keep above final success gif */
         }
 
-        /* Top black banner with text and emoji */
         .top-banner {
             background-color: black;
             color: white;
@@ -41,19 +37,15 @@
             transform: translateX(-50%);
             border-radius: 0 0 10px 10px;
             z-index: 2;
-            /* Keep banner on top of bear content */
         }
 
-        /* Standard cartoon bear holding heart and rose */
         .bear-image {
             display: block;
             margin: 50px auto 30px;
-            /* Space for top banner */
             max-width: 250px;
             height: auto;
         }
 
-        /* The question text */
         h1.question-text {
             color: #4A4A4A;
             font-size: 36px;
@@ -61,7 +53,6 @@
             position: relative;
         }
 
-        /* A placeholder single red heart emoji */
         .heart-emoji-centered {
             display: block;
             margin: 0 auto 30px;
@@ -69,13 +60,11 @@
             color: red;
         }
 
-        /* Relative positioning context for displaced NO button */
         .button-area {
             position: relative;
             display: inline-block;
         }
 
-        /* Styling for both buttons */
         .nav-button {
             padding: 15px 40px;
             font-size: 24px;
@@ -87,25 +76,17 @@
             margin: 0 10px;
         }
 
-        /* Charcoal grey button with NO text and smile emoji */
         #no-button {
             background-color: #4A4A4A;
             color: white;
             position: absolute;
-            /* Allows for displacement */
-            /* Positions the button to overlap "Will You" text on larger screens */
             top: -160px;
-            /* Estimated from image and standard heading sizes */
             left: -150px;
             transform: rotate(-5deg);
-            /* Slight rotation to mimic image */
             transition: all 0.2s ease-out;
-            /* For smooth runaway motion */
             opacity: 0.9;
-            /* Slight transparency to show text interaction */
         }
 
-        /* Light warm pink button with YES text and sparkle emoji */
         #yes-button {
             background-color: #FF9999;
             color: white;
@@ -116,7 +97,6 @@
             transform: scale(1.1);
         }
 
-        /* Container for final victory state, hidden initially */
         #success-state {
             display: none;
             position: fixed;
@@ -128,7 +108,6 @@
             align-items: center;
             flex-direction: column;
             background-color: rgba(253, 219, 210, 0.9);
-            /* Opaque gradient color */
             z-index: 3;
         }
 
@@ -155,53 +134,79 @@
         <img src="https://media.tenor.com/uLEL5eZovF4AAAAj/bubu-dudu-sseeyall.gif" alt="Bear holding a heart and rose"
             class="bear-image">
 
-
         <h1 class="question-text">Will You Be My Valentine?</h1>
         <span class="heart-emoji-centered">❤️</span>
 
         <div class="button-area">
-            <button id="yes-button" class="nav-button" onclick="celebrate()">YES ✨</button>
-            
-            <button id="no-button" class="nav-button" onmouseover="runAwayNo(event)" ontouchstart="runAwayNo(event)">NO 😊</button>
+            <button id="yes-button" class="nav-button" onclick="celebrate()">✨ YES 😊</button>
+            <button id="no-button" class="nav-button" onmouseover="runAwayNo(event)" ontouchstart="runAwayNo(event)">NO 🥹</button>
         </div>
     </div>
 
     <div id="success-state">
         <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Kissing bears"
             id="success-gif">
-        <h2 id="success-message">Yay! I knew you'd say yes! ❤️</h2>
+        <h2 id="success-message">❤️ Yay! I knew you would say yes! ❤️</h2>
     </div>
 
     <script>
-        // Function to make the NO button move away when hovered or touched
+        // Force the page to reset properly if they use the browser refresh button
+        window.onload = function() {
+            document.body.style.overflow = "hidden"; // Lock screen initially
+            document.querySelector(".content-container").style.display = "block";
+            document.getElementById("success-state").style.display = "none";
+            
+            var noButton = document.getElementById("no-button");
+            noButton.style.position = "absolute";
+            noButton.style.top = "-160px";
+            noButton.style.left = "-150px";
+            noButton.style.transform = "rotate(-5deg)";
+            noButton.style.opacity = "0.9";
+        };
+
+        // Make NO button run away
         function runAwayNo(event) {
-            // This prevents the screen tap from actually registering as a click if they tap really fast
             if (event) {
                 event.preventDefault(); 
             }
 
             var noButton = document.getElementById("no-button");
-
-            // Generate random X and Y positions within a sensible range of the screen
-            // Added slight padding so it doesn't go completely off-screen
             var padding = 20; 
             var randomX = Math.floor(Math.random() * (window.innerWidth - noButton.offsetWidth - padding));
             var randomY = Math.floor(Math.random() * (window.innerHeight - noButton.offsetHeight - padding));
 
-            // Move the button relative to the top-left of the screen
             noButton.style.position = "fixed";
             noButton.style.top = Math.max(padding, randomY) + "px";
             noButton.style.left = Math.max(padding, randomX) + "px";
-            noButton.style.transform = "rotate(0deg)"; // Reset rotation when moving
-            noButton.style.opacity = 1; // Full opacity when moving
+            noButton.style.transform = "rotate(0deg)"; 
+            noButton.style.opacity = 1; 
         }
 
-        // Function to show victory state when YES is clicked
+        // Show success state and handle timers/refreshing
         function celebrate() {
-            // Hide the main screen content
             document.querySelector(".content-container").style.display = "none";
-            // Show the success area
             document.getElementById("success-state").style.display = "flex";
+
+            // UNLOCK the screen so they can pull-to-refresh on this page!
+            document.body.style.overflow = "auto";
+
+            // 10 Second Timer
+            setTimeout(function() {
+                // Re-lock the screen so the NO button works properly again
+                document.body.style.overflow = "hidden";
+                
+                // Show the main screen again
+                document.querySelector(".content-container").style.display = "block";
+                document.getElementById("success-state").style.display = "none";
+                
+                // Put the NO button back in its original spot
+                var noButton = document.getElementById("no-button");
+                noButton.style.position = "absolute";
+                noButton.style.top = "-160px";
+                noButton.style.left = "-150px";
+                noButton.style.transform = "rotate(-5deg)";
+                noButton.style.opacity = "0.9";
+            }, 10000); // 10000 milliseconds = 10 seconds
         }
     </script>
 </body>
