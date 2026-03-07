@@ -130,6 +130,17 @@
 
     <div class="top-banner">Send me this😊</div>
 
+
+    
+    <audio id="first-music" autoplay loop muted>
+        <source src="/firstsong.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="success-music" loop>
+        <source src="/secondsong.mp3" type="audio/mpeg">
+    </audio>
+
+
     <div class="content-container">
         <img src="https://media.tenor.com/uLEL5eZovF4AAAAj/bubu-dudu-sseeyall.gif" alt="Bear holding a heart and rose"
             class="bear-image">
@@ -184,6 +195,12 @@
 
         // Show success state and handle timers/refreshing
         function celebrate() {
+
+
+            // play success music
+            document.getElementById("success-music").volume = 0.5;
+            document.getElementById("success-music").play();
+            
             document.querySelector(".content-container").style.display = "none";
             document.getElementById("success-state").style.display = "flex";
 
@@ -192,6 +209,7 @@
 
             // 10 Second Timer
             setTimeout(function() {
+                
                 // Re-lock the screen so the NO button works properly again
                 document.body.style.overflow = "hidden";
                 
