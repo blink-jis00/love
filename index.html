@@ -16,13 +16,13 @@
             min-height: 100vh;
             text-align: center;
             background-image: linear-gradient(to bottom, #e68a4d, #fddbd2);
-            /* Keep this hidden by default so the NO button is hard to catch! */
             overflow: hidden; 
         }
 
         .content-container {
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         .top-banner {
@@ -39,9 +39,17 @@
             z-index: 2;
         }
 
+        /* Container for the NO button to keep it centered initially */
+        .no-button-initial-box {
+            margin-top: 60px; /* Space below the banner */
+            display: flex;
+            justify-content: center;
+            height: 60px; /* Space for the button */
+        }
+
         .bear-image {
             display: block;
-            margin: 50px auto 30px;
+            margin: 20px auto 30px;
             max-width: 250px;
             height: auto;
         }
@@ -72,25 +80,18 @@
             border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            margin: 0 10px;
+            transition: all 0.2s ease-out;
         }
 
         #no-button {
             background-color: #4A4A4A;
             color: white;
-            position: absolute;
-            top: -160px;
-            left: -150px;
-            transform: rotate(-5deg);
-            transition: all 0.2s ease-out;
-            opacity: 0.9;
+            z-index: 10;
         }
 
         #yes-button {
             background-color: #FF9999;
             color: white;
-            transition: transform 0.2s;
         }
 
         #yes-button:hover {
@@ -130,104 +131,61 @@
 
     <div class="top-banner">Send me this😊</div>
 
-
-    
-    <audio id="first-music" autoplay loop muted>
-        <source src="firstsong.mp3" type="audio/mpeg">
-    </audio>
-
-    <audio id="success-music" loop>
-        <source src="secondsong.mp3" type="audio/mpeg">
-    </audio>
-
-
     <div class="content-container">
-        <img src="https://media.tenor.com/uLEL5eZovF4AAAAj/bubu-dudu-sseeyall.gif" alt="Bear holding a heart and rose"
-            class="bear-image">
+        
+        <div class="no-button-initial-box">
+             <button id="no-button" class="nav-button" onmouseover="runAwayNo(event)" ontouchstart="runAwayNo(event)">NO 🥹</button>
+        </div>
+
+        <img src="https://media.tenor.com/uLEL5eZovF4AAAAj/bubu-dudu-sseeyall.gif" alt="Bear holding a heart and rose" class="bear-image">
 
         <h1 class="question-text">Will You Be My Valentine?</h1>
         <span class="heart-emoji-centered">❤️</span>
 
         <div class="button-area">
             <button id="yes-button" class="nav-button" onclick="celebrate()">✨ YES 😊</button>
-            <button id="no-button" class="nav-button" onmouseover="runAwayNo(event)" ontouchstart="runAwayNo(event)">NO 🥹</button>
         </div>
     </div>
 
     <div id="success-state">
-        <img src="https://media.tenor.com/CA5EAS56NsoAAAAj/sseeyall-bubu-dudu.gif" alt="Saying Yes"
-            id="success-gif">
+        <img src="https://media.tenor.com/CA5EAS56NsoAAAAj/sseeyall-bubu-dudu.gif" alt="Saying Yes" id="success-gif">
         <h2 id="success-message">❤️ Yay! I knew you would say yes! ❤️</h2>
     </div>
 
-    <script>
-        // Force the page to reset properly if they use the browser refresh button
-        window.onload = function() {
-            document.body.style.overflow = "hidden"; // Lock screen initially
-            document.querySelector(".content-container").style.display = "block";
-            document.getElementById("success-state").style.display = "none";
-            
-            var noButton = document.getElementById("no-button");
-            noButton.style.position = "absolute";
-            noButton.style.top = "-160px";
-            noButton.style.left = "-150px";
-            noButton.style.transform = "rotate(-5deg)";
-            noButton.style.opacity = "0.9";
-        };
+    <audio id="success-music" loop>
+        <source src="secondsong.mp3" type="audio/mpeg">
+    </audio>
 
-        // Make NO button run away
+    <script>
         function runAwayNo(event) {
-            if (event) {
-                event.preventDefault(); 
-            }
+            if (event) event.preventDefault(); 
 
             var noButton = document.getElementById("no-button");
             var padding = 20; 
+            
+            // Randomize position across the whole screen
             var randomX = Math.floor(Math.random() * (window.innerWidth - noButton.offsetWidth - padding));
             var randomY = Math.floor(Math.random() * (window.innerHeight - noButton.offsetHeight - padding));
 
             noButton.style.position = "fixed";
             noButton.style.top = Math.max(padding, randomY) + "px";
             noButton.style.left = Math.max(padding, randomX) + "px";
-            noButton.style.transform = "rotate(0deg)"; 
-            noButton.style.opacity = 1; 
         }
 
-        // Show success state and handle timers/refreshing
         function celebrate() {
-
-
-            // play success music
-           
-            document.getElementById("success-music").play();
-            document.getElementById("success-music").volume = 0.2;
+            var music = document.getElementById("success-music");
+            music.play().catch(e => console.log("Audio play blocked until interaction"));
+            music.volume = 0.2;
             
             document.querySelector(".content-container").style.display = "none";
             document.getElementById("success-state").style.display = "flex";
-
-            // UNLOCK the screen so they can pull-to-refresh on this page!
             document.body.style.overflow = "auto";
 
-            // 10 Second Timer
+            // Reset after 10 seconds
             setTimeout(function() {
-                
-                // Re-lock the screen so the NO button works properly again
-                document.body.style.overflow = "hidden";
-                
-                // Show the main screen again
-                document.querySelector(".content-container").style.display = "block";
-                document.getElementById("success-state").style.display = "none";
-                
-                // Put the NO button back in its original spot
-                var noButton = document.getElementById("no-button");
-                noButton.style.position = "absolute";
-                noButton.style.top = "-160px";
-                noButton.style.left = "-150px";
-                noButton.style.transform = "rotate(-5deg)";
-                noButton.style.opacity = "0.9";
-            }, 10000); // 10000 milliseconds = 10 seconds
+                location.reload(); // Simplest way to reset the positions properly
+            }, 10000);
         }
     </script>
 </body>
-
 </html>
